@@ -22,18 +22,33 @@ const Checkout = () => {
     }, []);
 
     useEffect(() => {
-        if (cartItems.length > 0) {
+        const total = getCartTotal();
+        if (cartItems.length > 0 && total > 0) {
+            const amount = Math.round(total * 100);
+
+            // Stripe requires at least 50 cents (approx)
+            if (amount < 50) {
+                console.warn("Cart total is too low for payment processing.");
+                return;
+            }
+
             // Create PaymentIntent as soon as the page loads
             fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/create-payment-intent`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    amount: Math.round(getCartTotal() * 100), // convert to cents
+                    amount: amount, // convert to cents
                     currency: "usd"
                 }),
             })
-                .then((res) => res.json())
-                .then((data) => setClientSecret(data.clientSecret));
+                .then((res) => {
+                    if (!res.ok) {
+                        return res.json().then(json => Promise.reject(json));
+                    }
+                    return res.json();
+                })
+                .then((data) => setClientSecret(data.clientSecret))
+                .catch((err) => console.error("Error creating payment intent:", err));
         }
     }, [cartItems, getCartTotal]);
 
