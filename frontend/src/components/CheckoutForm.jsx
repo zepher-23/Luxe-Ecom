@@ -31,7 +31,7 @@ const CheckoutForm = ({ clientSecret }) => {
 
     useEffect(() => {
         // Fetch shipping rates
-        fetch('http://localhost:5000/api/shipping')
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/shipping`)
             .then(res => res.json())
             .then(data => {
                 setShippingRates(data);
@@ -56,7 +56,7 @@ const CheckoutForm = ({ clientSecret }) => {
             const newTotal = getCartTotal() + rate.price;
 
             try {
-                await fetch('http://localhost:5000/api/payment/update-payment-intent', {
+                await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/update-payment-intent`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

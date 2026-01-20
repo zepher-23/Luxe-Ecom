@@ -15,7 +15,7 @@ const Profile = () => {
             navigate('/login');
         } else {
             // Fetch Orders
-            fetch('http://localhost:5000/api/orders/myorders', {
+            fetch(`${import.meta.env.VITE_BACKEND_URL}/api/orders/myorders`, {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },

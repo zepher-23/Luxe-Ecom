@@ -15,7 +15,7 @@ const Checkout = () => {
 
     useEffect(() => {
         // fetch publishable key
-        fetch("http://localhost:5000/api/payment/config").then(async (r) => {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/config`).then(async (r) => {
             const { publishableKey } = await r.json();
             setStripePromise(loadStripe(publishableKey));
         });
@@ -24,7 +24,7 @@ const Checkout = () => {
     useEffect(() => {
         if (cartItems.length > 0) {
             // Create PaymentIntent as soon as the page loads
-            fetch("http://localhost:5000/api/payment/create-payment-intent", {
+            fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/create-payment-intent`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
